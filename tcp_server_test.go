@@ -1,10 +1,11 @@
 package tcp_server
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"net"
 	"testing"
 	"time"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func buildTestServer() *server {
@@ -18,9 +19,11 @@ func Test_accepting_new_client_callback(t *testing.T) {
 	var messageText string
 	var newClient bool
 	var connectinClosed bool
+	var clientAddr string
 
 	server.OnNewClient(func(c *Client) {
 		newClient = true
+		clientAddr = c.RemoteAddr()
 	})
 	server.OnNewMessage(func(c *Client, message string) {
 		messageReceived = true
@@ -44,6 +47,10 @@ func Test_accepting_new_client_callback(t *testing.T) {
 
 	// Wait for server
 	time.Sleep(10 * time.Millisecond)
+
+	Convey("Client Address should be equal", t, func() {
+		So(clientAddr, ShouldEqual, conn.LocalAddr().String())
+	})
 
 	Convey("Messages should be equal", t, func() {
 		So(messageText, ShouldEqual, "Test message\n")

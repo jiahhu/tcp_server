@@ -69,6 +69,11 @@ func (s *server) OnNewMessage(callback func(c *Client, message string)) {
 	s.onNewMessage = callback
 }
 
+// RemoteAddr Get remote address
+func (c *Client) RemoteAddr() (addr string) {
+	return c.conn.RemoteAddr().String()
+}
+
 // Start network server
 func (s *server) Listen() {
 	listener, err := net.Listen("tcp", s.address)
